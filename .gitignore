@@ -1,0 +1,10 @@
+data/
+dataset/
+logs/
+old-logs/
+old_logs/
+__pycache__
+*.pyc
+60channelMRIs.zip
+*.pt
+checkpoints/

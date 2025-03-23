@@ -1,0 +1,2 @@
+only had batch size 2
+will try size 4 to see if validation loss jumps around less 

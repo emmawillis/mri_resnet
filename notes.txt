@@ -1,0 +1,27 @@
+Total patients: 595
+mris in test 155
+mris in train 598
+
+3D ResNet-50 model
+torch.nn.BatchNorm3d
+image norm:
+image = (image - np.min(image)) / (np.max(image) - np.min(image) + 1e-5)
+
+transform = transforms.Compose([
+        transforms.RandomHorizontalFlip(),
+        transforms.RandomRotation(15)
+    ])
+
+        criterion = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+
+TODO
+- try Batch Size (16–32)?
+
+- get class distribution for train and test dataset - # samples for each
+- try it on binary task and compare with https://www.spiedigitallibrary.org/conference-proceedings-of-spie/12465/1246523/Prostate-Gleason-score-prediction-via-MRI-using-capsule-network/10.1117/12.2653621.full?tab=ArticleLink 
+    - try to drop GG2 and 3 
+    - binary classification
+    - present tomorrow if get good results
+- then add back in all classes after
