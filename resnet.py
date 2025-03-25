@@ -12,23 +12,36 @@ from pytorchvideo.models.resnet import create_resnet
 from sklearn.metrics import classification_report, confusion_matrix
 from torch.utils.data import Dataset
 
-# Label mapping
+# Label mapping for multi-class (GG1 to GG5)
 gleason_labels = {"GG1": 0, "GG2": 1, "GG3": 2, "GG4": 3, "GG5": 4}
 class_names = list(gleason_labels.keys())
 
 class MRIDataset(Dataset):
-    def __init__(self, root_dir, transform=None):
+    def __init__(self, root_dir, transform=None, binary=False):
         self.root_dir = root_dir
         self.transform = transform
+        self.binary = binary
         self.samples = []
 
         for folder_name in os.listdir(root_dir):
             folder_path = os.path.join(root_dir, folder_name)
             if os.path.isdir(folder_path):
                 label_str = folder_name.split("-")[-1]
-                if label_str in gleason_labels:
-                    label = gleason_labels[label_str]
-                    self.samples.append((folder_path, label))
+                if self.binary:
+                    # Only keep low (GG1) and high (GG4 or GG5) samples
+                    if label_str == "GG1":
+                        label = 0  # low
+                        self.samples.append((folder_path, label))
+                    elif label_str in ["GG4", "GG5"]:
+                        label = 1  # high
+                        self.samples.append((folder_path, label))
+                    else:
+                        # Ignore GG2 and GG3
+                        continue
+                else:
+                    if label_str in gleason_labels:
+                        label = gleason_labels[label_str]
+                        self.samples.append((folder_path, label))
 
     def __len__(self):
         return len(self.samples)
@@ -44,7 +57,11 @@ class MRIDataset(Dataset):
                 dicom_slices.append((instance_number, dcm))
 
         dicom_slices.sort(key=lambda x: x[0])
-        volume = [(dcm.pixel_array.astype(np.float32) - np.min(dcm.pixel_array)) / (np.max(dcm.pixel_array) - np.min(dcm.pixel_array) + 1e-5) for _, dcm in dicom_slices]
+        volume = [
+            (dcm.pixel_array.astype(np.float32) - np.min(dcm.pixel_array)) / 
+            (np.max(dcm.pixel_array) - np.min(dcm.pixel_array) + 1e-5)
+            for _, dcm in dicom_slices
+        ]
         volume = torch.tensor(np.stack(volume, axis=0)).unsqueeze(0)
 
         transform = tio.Compose([
@@ -60,9 +77,20 @@ class MRIDataset(Dataset):
 
         return volume, label
 
+def train(binary=False):
+    # Set number of classes based on mode
+    num_classes = 2 if binary else 5
 
-def train():
-    model = create_resnet(input_channel=1, model_depth=50, norm=torch.nn.BatchNorm3d).to("cuda")
+    # Create the ResNet50 model with the correct number of classes.
+    model = create_resnet(
+        input_channel=1,
+        model_depth=50,
+        norm=torch.nn.BatchNorm3d,
+    )
+    model.blocks[5].proj = nn.Linear(in_features=2048, out_features=num_classes)
+
+    model = model.to("cuda")
+
     print(model)
 
     transform = transforms.Compose([
@@ -70,19 +98,20 @@ def train():
         transforms.RandomRotation(15)
     ])
 
-    train_dataset = MRIDataset("./dataset/train", transform=transform)
-    val_dataset = MRIDataset("./dataset/test", transform=transform)
-    train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True, num_workers=1) # TODO paper uses batch size 16
+    # Create datasets with the binary flag passed on.
+    train_dataset = MRIDataset("./dataset/train", transform=transform, binary=binary)
+    val_dataset = MRIDataset("./dataset/test", transform=transform, binary=binary)
+    train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True, num_workers=1)  # Adjust batch size as needed
     val_loader = DataLoader(val_dataset, batch_size=4, shuffle=False, num_workers=1)
 
-    # Check DataLoader Output
+    # Check DataLoader output for one batch.
     for images, labels in train_loader:
-        print("Batch Image Shape:", images.shape)  # (Batch, 1, 60, H, W)
+        print("Batch Image Shape:", images.shape)  # Expected shape: (Batch, 1, 60, H, W)
         print("Batch Labels:", labels)
-        break  # Only check one batch
+        break
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001) # TODO paper uses 0.0001
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
 
     best_val_loss = float('inf')
     checkpoint_path = "./best_model.pt"
@@ -128,9 +157,19 @@ def train():
         print(f"Epoch {epoch}: Train Loss={avg_train_loss:.4f}, Val Loss={avg_val_loss:.4f}")
 
         # Classification report
-        target_names = [label for label, _ in sorted(gleason_labels.items(), key=lambda x: x[1])]
-        labels = [0, 1, 2, 3, 4]  # Make sure all expected class indices are listed
+        if binary:
+            target_names = ["Low", "High"]
+            labels_list = [0, 1]
+        else:
+            target_names = [label for label, _ in sorted(gleason_labels.items(), key=lambda x: x[1])]
+            labels_list = [0, 1, 2, 3, 4]
 
-        report = classification_report(all_labels, all_preds, labels=labels, target_names=target_names, zero_division=0)
+        report = classification_report(
+            all_labels,
+            all_preds,
+            labels=labels_list,
+            target_names=target_names,
+            zero_division=0
+        )
         print("\nClassification Report:\n", report)
         print("Confusion Matrix:\n", confusion_matrix(all_labels, all_preds))
