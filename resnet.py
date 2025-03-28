@@ -11,6 +11,7 @@ import torchio as tio
 from pytorchvideo.models.resnet import create_resnet
 from sklearn.metrics import classification_report, confusion_matrix
 from torch.utils.data import Dataset
+from collections import Counter
 
 # Label mapping for multi-class (GG1 to GG5)
 gleason_labels = {"GG1": 0, "GG2": 1, "GG3": 2, "GG4": 3, "GG5": 4}
@@ -77,6 +78,27 @@ class MRIDataset(Dataset):
 
         return volume, label
 
+
+
+def compute_class_weights(dataset, binary=False):
+    """
+    Computes class weights based on class frequencies in the dataset.
+    Returns a torch tensor of weights.
+    """
+    # Count labels in the training dataset
+    labels = [label for _, label in dataset.samples]
+    counter = Counter(labels)
+    total = sum(counter.values())
+    num_classes = 2 if binary else 5
+
+    weights = []
+    for i in range(num_classes):
+        count = counter.get(i, 1)  # avoid division by 0
+        weight = total / (num_classes * count)
+        weights.append(weight)
+
+    return torch.tensor(weights).to("cuda")
+
 def train(binary=False):
     # Set number of classes based on mode
     num_classes = 2 if binary else 5
@@ -110,13 +132,16 @@ def train(binary=False):
         print("Batch Labels:", labels)
         break
 
-    criterion = nn.CrossEntropyLoss()
+    class_weights = compute_class_weights(train_dataset, binary=binary)
+    print("Class Weights:", class_weights)
+    criterion = nn.CrossEntropyLoss(weight=class_weights)
+
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
     best_val_loss = float('inf')
     checkpoint_path = "./best_model.pt"
 
-    for epoch in range(1, 31):
+    for epoch in range(1, 101):
         model.train()
         running_loss = 0.0
         for inputs, labels in train_loader:
@@ -131,45 +156,49 @@ def train(binary=False):
         avg_train_loss = running_loss / len(train_loader)
 
         # Validation step
-        model.eval()
-        val_loss = 0.0
-        all_preds = []
-        all_labels = []
-        with torch.no_grad():
-            for inputs, labels in val_loader:
-                inputs, labels = inputs.to("cuda"), labels.to("cuda")
-                outputs = model(inputs)
-                loss = criterion(outputs, labels)
-                val_loss += loss.item()
+        if epoch % 5 == 0:
 
-                preds = torch.argmax(outputs, dim=1)
-                all_preds.extend(preds.cpu().numpy())
-                all_labels.extend(labels.cpu().numpy())
+            model.eval()
+            val_loss = 0.0
+            all_preds = []
+            all_labels = []
+            with torch.no_grad():
+                for inputs, labels in val_loader:
+                    inputs, labels = inputs.to("cuda"), labels.to("cuda")
+                    outputs = model(inputs)
+                    loss = criterion(outputs, labels)
+                    val_loss += loss.item()
 
-        avg_val_loss = val_loss / len(val_loader)
+                    preds = torch.argmax(outputs, dim=1)
+                    all_preds.extend(preds.cpu().numpy())
+                    all_labels.extend(labels.cpu().numpy())
 
-        # Save checkpoint if best
-        if avg_val_loss < best_val_loss:
-            best_val_loss = avg_val_loss
-            torch.save(model.state_dict(), checkpoint_path)
-            print(f"Epoch {epoch}: New best model saved (val_loss={avg_val_loss:.4f})")
+            avg_val_loss = val_loss / len(val_loader)
 
-        print(f"Epoch {epoch}: Train Loss={avg_train_loss:.4f}, Val Loss={avg_val_loss:.4f}")
+            # Save checkpoint if best
+            if avg_val_loss < best_val_loss:
+                best_val_loss = avg_val_loss
+                torch.save(model.state_dict(), checkpoint_path)
+                print(f"Epoch {epoch}: New best model saved (val_loss={avg_val_loss:.4f})")
 
-        # Classification report
-        if binary:
-            target_names = ["Low", "High"]
-            labels_list = [0, 1]
+            print(f"Epoch {epoch}: Train Loss={avg_train_loss:.4f}, Val Loss={avg_val_loss:.4f}")
+
+            # Classification report
+            if binary:
+                target_names = ["Low", "High"]
+                labels_list = [0, 1]
+            else:
+                target_names = [label for label, _ in sorted(gleason_labels.items(), key=lambda x: x[1])]
+                labels_list = [0, 1, 2, 3, 4]
+
+            report = classification_report(
+                all_labels,
+                all_preds,
+                labels=labels_list,
+                target_names=target_names,
+                zero_division=0
+            )
+            print("\nClassification Report:\n", report)
+            print("Confusion Matrix:\n", confusion_matrix(all_labels, all_preds))
         else:
-            target_names = [label for label, _ in sorted(gleason_labels.items(), key=lambda x: x[1])]
-            labels_list = [0, 1, 2, 3, 4]
-
-        report = classification_report(
-            all_labels,
-            all_preds,
-            labels=labels_list,
-            target_names=target_names,
-            zero_division=0
-        )
-        print("\nClassification Report:\n", report)
-        print("Confusion Matrix:\n", confusion_matrix(all_labels, all_preds))
+            print(f"Epoch {epoch}: Train Loss={avg_train_loss:.4f}")

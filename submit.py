@@ -13,7 +13,7 @@ executor.update_parameters(
     cpus_per_task=16,
     slurm_time='08:00:00',  # 8 hours
     stderr_to_stdout=True,
-    slurm_name="binary-mri-emma"
+    slurm_name="100-binary-weighted-mri-emma"
 )
 
 job = executor.submit(train, binary=True)

@@ -1,0 +1,912 @@
+submitit INFO (2025-03-24 21:36:55,308) - Starting with JobEnvironment(job_id=15505052, hostname=gpu005, local_rank=0(1), node=0(1), global_rank=0(1))
+submitit INFO (2025-03-24 21:36:55,308) - Loading pickle: /fs01/home/ewillis/my_stuff/mri_resnet/logs/15505052_submitted.pkl
+Net(
+  (blocks): ModuleList(
+    (0): ResNetBasicStem(
+      (conv): Conv3d(1, 64, kernel_size=(3, 7, 7), stride=(1, 2, 2), padding=(1, 3, 3), bias=False)
+      (norm): BatchNorm3d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (activation): ReLU()
+      (pool): MaxPool3d(kernel_size=(1, 3, 3), stride=(1, 2, 2), padding=[0, 1, 1], dilation=1, ceil_mode=False)
+    )
+    (1): ResStage(
+      (res_blocks): ModuleList(
+        (0): ResBlock(
+          (branch1_conv): Conv3d(64, 256, kernel_size=(1, 1, 1), stride=(np.int64(1), np.int64(1), np.int64(1)), bias=False)
+          (branch1_norm): BatchNorm3d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(64, 64, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_a): BatchNorm3d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(64, 64, kernel_size=(1, 3, 3), stride=(1, 1, 1), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(64, 256, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+        (1-2): 2 x ResBlock(
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(256, 64, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_a): BatchNorm3d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(64, 64, kernel_size=(1, 3, 3), stride=(1, 1, 1), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(64, 256, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+      )
+    )
+    (2): ResStage(
+      (res_blocks): ModuleList(
+        (0): ResBlock(
+          (branch1_conv): Conv3d(256, 512, kernel_size=(1, 1, 1), stride=(np.int64(1), np.int64(2), np.int64(2)), bias=False)
+          (branch1_norm): BatchNorm3d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(256, 128, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_a): BatchNorm3d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(128, 128, kernel_size=(1, 3, 3), stride=(1, 2, 2), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(128, 512, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+        (1-3): 3 x ResBlock(
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(512, 128, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_a): BatchNorm3d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(128, 128, kernel_size=(1, 3, 3), stride=(1, 1, 1), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(128, 512, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+      )
+    )
+    (3): ResStage(
+      (res_blocks): ModuleList(
+        (0): ResBlock(
+          (branch1_conv): Conv3d(512, 1024, kernel_size=(1, 1, 1), stride=(np.int64(1), np.int64(2), np.int64(2)), bias=False)
+          (branch1_norm): BatchNorm3d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(512, 256, kernel_size=(3, 1, 1), stride=(1, 1, 1), padding=(1, 0, 0), bias=False)
+            (norm_a): BatchNorm3d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(256, 256, kernel_size=(1, 3, 3), stride=(1, 2, 2), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(256, 1024, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+        (1-5): 5 x ResBlock(
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(1024, 256, kernel_size=(3, 1, 1), stride=(1, 1, 1), padding=(1, 0, 0), bias=False)
+            (norm_a): BatchNorm3d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(256, 256, kernel_size=(1, 3, 3), stride=(1, 1, 1), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(256, 1024, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+      )
+    )
+    (4): ResStage(
+      (res_blocks): ModuleList(
+        (0): ResBlock(
+          (branch1_conv): Conv3d(1024, 2048, kernel_size=(1, 1, 1), stride=(np.int64(1), np.int64(2), np.int64(2)), bias=False)
+          (branch1_norm): BatchNorm3d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(1024, 512, kernel_size=(3, 1, 1), stride=(1, 1, 1), padding=(1, 0, 0), bias=False)
+            (norm_a): BatchNorm3d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(512, 512, kernel_size=(1, 3, 3), stride=(1, 2, 2), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(512, 2048, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+        (1-2): 2 x ResBlock(
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(2048, 512, kernel_size=(3, 1, 1), stride=(1, 1, 1), padding=(1, 0, 0), bias=False)
+            (norm_a): BatchNorm3d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(512, 512, kernel_size=(1, 3, 3), stride=(1, 1, 1), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(512, 2048, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+      )
+    )
+    (5): ResNetBasicHead(
+      (pool): AvgPool3d(kernel_size=(4, 7, 7), stride=(1, 1, 1), padding=(0, 0, 0))
+      (dropout): Dropout(p=0.5, inplace=False)
+      (proj): Linear(in_features=2048, out_features=5, bias=True)
+      (output_pool): AdaptiveAvgPool3d(output_size=1)
+    )
+  )
+)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Batch Image Shape: torch.Size([4, 1, 60, 256, 256])
+Batch Labels: tensor([1, 1, 3, 0])
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 1: New best model saved (val_loss=1.5599)
+Epoch 1: Train Loss=1.4724, Val Loss=1.5599
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.00      0.00      0.00        49
+         GG2       0.39      1.00      0.56        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.39       155
+   macro avg       0.08      0.20      0.11       155
+weighted avg       0.15      0.39      0.22       155
+
+Confusion Matrix:
+ [[ 0 49  0  0  0]
+ [ 0 60  0  0  0]
+ [ 0 20  0  0  0]
+ [ 0 16  0  0  0]
+ [ 0 10  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 2: New best model saved (val_loss=1.5379)
+Epoch 2: Train Loss=1.4342, Val Loss=1.5379
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.38      0.10      0.16        49
+         GG2       0.39      0.92      0.54        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.39       155
+   macro avg       0.15      0.20      0.14       155
+weighted avg       0.27      0.39      0.26       155
+
+Confusion Matrix:
+ [[ 5 44  0  0  0]
+ [ 5 55  0  0  0]
+ [ 1 19  0  0  0]
+ [ 1 15  0  0  0]
+ [ 1  9  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 3: New best model saved (val_loss=1.5295)
+Epoch 3: Train Loss=1.4812, Val Loss=1.5295
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.38      0.47      0.42        49
+         GG2       0.38      0.60      0.47        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.38       155
+   macro avg       0.15      0.21      0.18       155
+weighted avg       0.27      0.38      0.31       155
+
+Confusion Matrix:
+ [[23 26  0  0  0]
+ [24 36  0  0  0]
+ [ 6 14  0  0  0]
+ [ 3 13  0  0  0]
+ [ 5  5  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 4: New best model saved (val_loss=1.4622)
+Epoch 4: Train Loss=1.3921, Val Loss=1.4622
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.32      1.00      0.48        49
+         GG2       0.00      0.00      0.00        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.32       155
+   macro avg       0.06      0.20      0.10       155
+weighted avg       0.10      0.32      0.15       155
+
+Confusion Matrix:
+ [[49  0  0  0  0]
+ [60  0  0  0  0]
+ [20  0  0  0  0]
+ [16  0  0  0  0]
+ [10  0  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 5: New best model saved (val_loss=1.4255)
+Epoch 5: Train Loss=1.3915, Val Loss=1.4255
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.32      1.00      0.48        49
+         GG2       0.00      0.00      0.00        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.32       155
+   macro avg       0.06      0.20      0.10       155
+weighted avg       0.10      0.32      0.15       155
+
+Confusion Matrix:
+ [[49  0  0  0  0]
+ [60  0  0  0  0]
+ [20  0  0  0  0]
+ [16  0  0  0  0]
+ [10  0  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 6: Train Loss=1.3929, Val Loss=1.4292
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.00      0.00      0.00        49
+         GG2       0.39      1.00      0.56        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.39       155
+   macro avg       0.08      0.20      0.11       155
+weighted avg       0.15      0.39      0.22       155
+
+Confusion Matrix:
+ [[ 0 49  0  0  0]
+ [ 0 60  0  0  0]
+ [ 0 20  0  0  0]
+ [ 0 16  0  0  0]
+ [ 0 10  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 7: Train Loss=1.3913, Val Loss=1.4256
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.00      0.00      0.00        49
+         GG2       0.39      1.00      0.56        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.39       155
+   macro avg       0.08      0.20      0.11       155
+weighted avg       0.15      0.39      0.22       155
+
+Confusion Matrix:
+ [[ 0 49  0  0  0]
+ [ 0 60  0  0  0]
+ [ 0 20  0  0  0]
+ [ 0 16  0  0  0]
+ [ 0 10  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 8: Train Loss=1.3825, Val Loss=1.4439
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.32      1.00      0.48        49
+         GG2       0.00      0.00      0.00        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.32       155
+   macro avg       0.06      0.20      0.10       155
+weighted avg       0.10      0.32      0.15       155
+
+Confusion Matrix:
+ [[49  0  0  0  0]
+ [60  0  0  0  0]
+ [20  0  0  0  0]
+ [16  0  0  0  0]
+ [10  0  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 9: New best model saved (val_loss=1.4231)
+Epoch 9: Train Loss=1.3768, Val Loss=1.4231
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.00      0.00      0.00        49
+         GG2       0.39      1.00      0.56        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.39       155
+   macro avg       0.08      0.20      0.11       155
+weighted avg       0.15      0.39      0.22       155
+
+Confusion Matrix:
+ [[ 0 49  0  0  0]
+ [ 0 60  0  0  0]
+ [ 0 20  0  0  0]
+ [ 0 16  0  0  0]
+ [ 0 10  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 10: New best model saved (val_loss=1.4210)
+Epoch 10: Train Loss=1.3790, Val Loss=1.4210
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.34      0.84      0.48        49
+         GG2       0.55      0.30      0.39        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.38       155
+   macro avg       0.18      0.23      0.17       155
+weighted avg       0.32      0.38      0.30       155
+
+Confusion Matrix:
+ [[41  8  0  0  0]
+ [42 18  0  0  0]
+ [18  2  0  0  0]
+ [11  5  0  0  0]
+ [10  0  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 11: New best model saved (val_loss=1.4196)
+Epoch 11: Train Loss=1.3732, Val Loss=1.4196
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.33      0.41      0.37        49
+         GG2       0.41      0.65      0.50        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.38       155
+   macro avg       0.15      0.21      0.17       155
+weighted avg       0.26      0.38      0.31       155
+
+Confusion Matrix:
+ [[20 29  0  0  0]
+ [21 39  0  0  0]
+ [ 6 14  0  0  0]
+ [ 9  7  0  0  0]
+ [ 4  6  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 12: New best model saved (val_loss=1.4166)
+Epoch 12: Train Loss=1.3740, Val Loss=1.4166
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.32      0.45      0.38        49
+         GG2       0.40      0.58      0.48        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.37       155
+   macro avg       0.15      0.21      0.17       155
+weighted avg       0.26      0.37      0.30       155
+
+Confusion Matrix:
+ [[22 27  0  0  0]
+ [25 35  0  0  0]
+ [ 8 12  0  0  0]
+ [ 9  7  0  0  0]
+ [ 4  6  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 13: Train Loss=1.3762, Val Loss=1.4190
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.32      0.90      0.47        49
+         GG2       0.47      0.13      0.21        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.34       155
+   macro avg       0.16      0.21      0.14       155
+weighted avg       0.28      0.34      0.23       155
+
+Confusion Matrix:
+ [[44  5  0  0  0]
+ [52  8  0  0  0]
+ [19  1  0  0  0]
+ [13  3  0  0  0]
+ [10  0  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 14: New best model saved (val_loss=1.4155)
+Epoch 14: Train Loss=1.3769, Val Loss=1.4155
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.37      0.59      0.45        49
+         GG2       0.43      0.55      0.49        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.40       155
+   macro avg       0.16      0.23      0.19       155
+weighted avg       0.28      0.40      0.33       155
+
+Confusion Matrix:
+ [[29 20  0  0  0]
+ [27 33  0  0  0]
+ [10 10  0  0  0]
+ [ 7  9  0  0  0]
+ [ 6  4  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 15: Train Loss=1.3740, Val Loss=1.4308
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.32      1.00      0.48        49
+         GG2       1.00      0.02      0.03        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.32       155
+   macro avg       0.26      0.20      0.10       155
+weighted avg       0.49      0.32      0.17       155
+
+Confusion Matrix:
+ [[49  0  0  0  0]
+ [59  1  0  0  0]
+ [20  0  0  0  0]
+ [16  0  0  0  0]
+ [10  0  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 16: Train Loss=1.3789, Val Loss=1.4303
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.35      0.55      0.43        49
+         GG2       0.42      0.53      0.47        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.38       155
+   macro avg       0.15      0.22      0.18       155
+weighted avg       0.27      0.38      0.32       155
+
+Confusion Matrix:
+ [[27 22  0  0  0]
+ [28 32  0  0  0]
+ [ 9 11  0  0  0]
+ [ 8  8  0  0  0]
+ [ 6  4  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 17: Train Loss=1.3710, Val Loss=1.4388
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.33      0.55      0.41        49
+         GG2       0.42      0.50      0.45        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.37       155
+   macro avg       0.15      0.21      0.17       155
+weighted avg       0.26      0.37      0.31       155
+
+Confusion Matrix:
+ [[27 22  0  0  0]
+ [30 30  0  0  0]
+ [11  9  0  0  0]
+ [ 9  7  0  0  0]
+ [ 6  4  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 18: Train Loss=1.3729, Val Loss=1.4287
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.35      0.35      0.35        49
+         GG2       0.43      0.77      0.55        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.41       155
+   macro avg       0.16      0.22      0.18       155
+weighted avg       0.28      0.41      0.32       155
+
+Confusion Matrix:
+ [[17 32  0  0  0]
+ [14 46  0  0  0]
+ [ 4 16  0  0  0]
+ [ 8  8  0  0  0]
+ [ 6  4  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 19: Train Loss=1.3747, Val Loss=1.4346
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.00      0.00      0.00        49
+         GG2       0.39      1.00      0.56        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.39       155
+   macro avg       0.08      0.20      0.11       155
+weighted avg       0.15      0.39      0.22       155
+
+Confusion Matrix:
+ [[ 0 49  0  0  0]
+ [ 0 60  0  0  0]
+ [ 0 20  0  0  0]
+ [ 1 15  0  0  0]
+ [ 1  9  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 20: Train Loss=1.3692, Val Loss=1.4458
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.32      1.00      0.48        49
+         GG2       0.00      0.00      0.00        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.32       155
+   macro avg       0.06      0.20      0.10       155
+weighted avg       0.10      0.32      0.15       155
+
+Confusion Matrix:
+ [[49  0  0  0  0]
+ [60  0  0  0  0]
+ [20  0  0  0  0]
+ [16  0  0  0  0]
+ [10  0  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 21: Train Loss=1.3670, Val Loss=1.4427
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.31      0.47      0.37        49
+         GG2       0.41      0.55      0.47        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.36       155
+   macro avg       0.14      0.20      0.17       155
+weighted avg       0.26      0.36      0.30       155
+
+Confusion Matrix:
+ [[23 26  0  0  0]
+ [27 33  0  0  0]
+ [10 10  0  0  0]
+ [ 9  7  0  0  0]
+ [ 6  4  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 22: Train Loss=1.3636, Val Loss=1.4510
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.32      0.90      0.47        49
+         GG2       0.50      0.13      0.21        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.34       155
+   macro avg       0.16      0.21      0.14       155
+weighted avg       0.29      0.34      0.23       155
+
+Confusion Matrix:
+ [[44  5  0  0  0]
+ [52  8  0  0  0]
+ [19  1  0  0  0]
+ [14  2  0  0  0]
+ [10  0  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 23: Train Loss=1.3753, Val Loss=1.4266
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.32      0.59      0.41        49
+         GG2       0.46      0.48      0.47        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.37       155
+   macro avg       0.16      0.22      0.18       155
+weighted avg       0.28      0.37      0.31       155
+
+Confusion Matrix:
+ [[29 20  0  0  0]
+ [31 29  0  0  0]
+ [14  6  0  0  0]
+ [11  5  0  0  0]
+ [ 7  3  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 24: Train Loss=1.3677, Val Loss=1.4289
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.33      0.55      0.42        49
+         GG2       0.43      0.53      0.48        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.38       155
+   macro avg       0.15      0.22      0.18       155
+weighted avg       0.27      0.38      0.32       155
+
+Confusion Matrix:
+ [[27 22  0  0  0]
+ [28 32  0  0  0]
+ [11  9  0  0  0]
+ [ 9  7  0  0  0]
+ [ 6  4  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 25: Train Loss=1.3693, Val Loss=1.4423
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.32      0.92      0.48        49
+         GG2       0.53      0.13      0.21        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.34       155
+   macro avg       0.17      0.21      0.14       155
+weighted avg       0.31      0.34      0.23       155
+
+Confusion Matrix:
+ [[45  4  0  0  0]
+ [52  8  0  0  0]
+ [19  1  0  0  0]
+ [15  1  0  0  0]
+ [ 9  1  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 26: Train Loss=1.3693, Val Loss=1.4397
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.31      0.47      0.37        49
+         GG2       0.41      0.55      0.47        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.36       155
+   macro avg       0.14      0.20      0.17       155
+weighted avg       0.26      0.36      0.30       155
+
+Confusion Matrix:
+ [[23 26  0  0  0]
+ [27 33  0  0  0]
+ [ 9 11  0  0  0]
+ [ 9  7  0  0  0]
+ [ 6  4  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 27: Train Loss=1.3726, Val Loss=1.4201
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.29      0.35      0.32        49
+         GG2       0.40      0.65      0.50        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.36       155
+   macro avg       0.14      0.20      0.16       155
+weighted avg       0.25      0.36      0.29       155
+
+Confusion Matrix:
+ [[17 32  0  0  0]
+ [21 39  0  0  0]
+ [ 6 14  0  0  0]
+ [ 9  7  0  0  0]
+ [ 5  5  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 28: Train Loss=1.3698, Val Loss=1.4188
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.29      0.27      0.28        49
+         GG2       0.40      0.73      0.52        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.37       155
+   macro avg       0.14      0.20      0.16       155
+weighted avg       0.25      0.37      0.29       155
+
+Confusion Matrix:
+ [[13 36  0  0  0]
+ [16 44  0  0  0]
+ [ 4 16  0  0  0]
+ [ 8  8  0  0  0]
+ [ 4  6  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 29: Train Loss=1.3703, Val Loss=1.4305
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.31      0.92      0.47        49
+         GG2       0.45      0.08      0.14        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.32       155
+   macro avg       0.15      0.20      0.12       155
+weighted avg       0.27      0.32      0.20       155
+
+Confusion Matrix:
+ [[45  4  0  0  0]
+ [55  5  0  0  0]
+ [19  1  0  0  0]
+ [15  1  0  0  0]
+ [10  0  0  0  0]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 30: Train Loss=1.3720, Val Loss=1.4428
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         GG1       0.31      0.94      0.47        49
+         GG2       0.38      0.05      0.09        60
+         GG3       0.00      0.00      0.00        20
+         GG4       0.00      0.00      0.00        16
+         GG5       0.00      0.00      0.00        10
+
+    accuracy                           0.32       155
+   macro avg       0.14      0.20      0.11       155
+weighted avg       0.24      0.32      0.18       155
+
+Confusion Matrix:
+ [[46  3  0  0  0]
+ [57  3  0  0  0]
+ [20  0  0  0  0]
+ [14  2  0  0  0]
+ [10  0  0  0  0]]
+submitit INFO (2025-03-25 05:01:48,267) - Job completed successfully
+submitit INFO (2025-03-25 05:01:48,772) - Exiting after successful completion
