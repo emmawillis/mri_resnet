@@ -122,7 +122,7 @@ def train(binary=False, epochs = 200):
     ])
 
     train_dataset = MRIDataset("./dataset/train", transform=train_transform, binary=binary)
-    val_dataset = MRIDataset("./dataset/test", transform=val_transform, binary=binary)
+    val_dataset = MRIDataset("./dataset/val", transform=val_transform, binary=binary)
 
     # Balanced sampler
     labels = [label for _, label in train_dataset.samples]

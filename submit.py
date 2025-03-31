@@ -13,7 +13,7 @@ executor.update_parameters(
     cpus_per_task=16,
     slurm_time=1000,
     stderr_to_stdout=True,
-    slurm_name="200-binary-focal-transformer"
+    slurm_name="200-5-fold"
 )
 
 job = executor.submit(train, binary=True)

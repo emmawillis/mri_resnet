@@ -9,7 +9,7 @@ random.seed(42)
 # Paths
 original_data_dir = r"../dataset/train"
 output_dir = r"../dataset"
-test_dir = os.path.join(output_dir, "test")
+test_dir = os.path.join(output_dir, "val")
 
 # Create train/test directories
 os.makedirs(test_dir, exist_ok=True)
