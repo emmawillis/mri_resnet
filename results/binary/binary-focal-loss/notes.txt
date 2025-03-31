@@ -1,0 +1,18 @@
+✅ Replaced CrossEntropyLoss with FocalLoss (custom implementation).
+
+✅ Improved 3D augmentation using torchio.
+
+✅ Added WeightedRandomSampler for balanced training batches.
+
+
+
+---
+switching between predicting either low or high
+
+TRY:
+Setting gamma = 0.5 in your FocalLoss
+
+Logging the Counter(labels) from each training batch for a few epochs
+
+Verifying your DataLoader uses sampler=..., not shuffle=True
+

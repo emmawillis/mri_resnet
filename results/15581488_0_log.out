@@ -1,0 +1,756 @@
+submitit INFO (2025-03-30 17:56:16,053) - Starting with JobEnvironment(job_id=15581488, hostname=gpu007, local_rank=0(1), node=0(1), global_rank=0(1))
+submitit INFO (2025-03-30 17:56:16,053) - Loading pickle: /fs01/home/ewillis/my_stuff/mri_resnet/logs/15581488_submitted.pkl
+Net(
+  (blocks): ModuleList(
+    (0): ResNetBasicStem(
+      (conv): Conv3d(1, 64, kernel_size=(3, 7, 7), stride=(1, 2, 2), padding=(1, 3, 3), bias=False)
+      (norm): BatchNorm3d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (activation): ReLU()
+      (pool): MaxPool3d(kernel_size=(1, 3, 3), stride=(1, 2, 2), padding=[0, 1, 1], dilation=1, ceil_mode=False)
+    )
+    (1): ResStage(
+      (res_blocks): ModuleList(
+        (0): ResBlock(
+          (branch1_conv): Conv3d(64, 256, kernel_size=(1, 1, 1), stride=(np.int64(1), np.int64(1), np.int64(1)), bias=False)
+          (branch1_norm): BatchNorm3d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(64, 64, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_a): BatchNorm3d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(64, 64, kernel_size=(1, 3, 3), stride=(1, 1, 1), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(64, 256, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+        (1-2): 2 x ResBlock(
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(256, 64, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_a): BatchNorm3d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(64, 64, kernel_size=(1, 3, 3), stride=(1, 1, 1), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(64, 256, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+      )
+    )
+    (2): ResStage(
+      (res_blocks): ModuleList(
+        (0): ResBlock(
+          (branch1_conv): Conv3d(256, 512, kernel_size=(1, 1, 1), stride=(np.int64(1), np.int64(2), np.int64(2)), bias=False)
+          (branch1_norm): BatchNorm3d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(256, 128, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_a): BatchNorm3d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(128, 128, kernel_size=(1, 3, 3), stride=(1, 2, 2), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(128, 512, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+        (1-3): 3 x ResBlock(
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(512, 128, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_a): BatchNorm3d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(128, 128, kernel_size=(1, 3, 3), stride=(1, 1, 1), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(128, 512, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+      )
+    )
+    (3): ResStage(
+      (res_blocks): ModuleList(
+        (0): ResBlock(
+          (branch1_conv): Conv3d(512, 1024, kernel_size=(1, 1, 1), stride=(np.int64(1), np.int64(2), np.int64(2)), bias=False)
+          (branch1_norm): BatchNorm3d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(512, 256, kernel_size=(3, 1, 1), stride=(1, 1, 1), padding=(1, 0, 0), bias=False)
+            (norm_a): BatchNorm3d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(256, 256, kernel_size=(1, 3, 3), stride=(1, 2, 2), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(256, 1024, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+        (1-5): 5 x ResBlock(
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(1024, 256, kernel_size=(3, 1, 1), stride=(1, 1, 1), padding=(1, 0, 0), bias=False)
+            (norm_a): BatchNorm3d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(256, 256, kernel_size=(1, 3, 3), stride=(1, 1, 1), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(256, 1024, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+      )
+    )
+    (4): ResStage(
+      (res_blocks): ModuleList(
+        (0): ResBlock(
+          (branch1_conv): Conv3d(1024, 2048, kernel_size=(1, 1, 1), stride=(np.int64(1), np.int64(2), np.int64(2)), bias=False)
+          (branch1_norm): BatchNorm3d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(1024, 512, kernel_size=(3, 1, 1), stride=(1, 1, 1), padding=(1, 0, 0), bias=False)
+            (norm_a): BatchNorm3d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(512, 512, kernel_size=(1, 3, 3), stride=(1, 2, 2), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(512, 2048, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+        (1-2): 2 x ResBlock(
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(2048, 512, kernel_size=(3, 1, 1), stride=(1, 1, 1), padding=(1, 0, 0), bias=False)
+            (norm_a): BatchNorm3d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(512, 512, kernel_size=(1, 3, 3), stride=(1, 1, 1), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(512, 2048, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+      )
+    )
+    (5): ResNetBasicHead(
+      (pool): AvgPool3d(kernel_size=(4, 7, 7), stride=(1, 1, 1), padding=(0, 0, 0))
+      (dropout): Dropout(p=0.5, inplace=False)
+      (proj): Linear(in_features=2048, out_features=2, bias=True)
+      (output_pool): AdaptiveAvgPool3d(output_size=1)
+    )
+  )
+)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Batch Image Shape: torch.Size([4, 1, 60, 256, 256])
+Batch Labels: tensor([1, 0, 0, 0])
+Epoch 1: Train Loss=0.0042
+Epoch 2: Train Loss=0.0037
+Epoch 3: Train Loss=0.0036
+Epoch 4: Train Loss=0.0035
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 3})
+Epoch 5: New best model saved (val_loss=0.0038)
+Epoch 5: Train Loss=0.0035, Val Loss=0.0038
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         Low       0.00      0.00      0.00        49
+        High       0.35      1.00      0.51        26
+
+    accuracy                           0.35        75
+   macro avg       0.17      0.50      0.26        75
+weighted avg       0.12      0.35      0.18        75
+
+Confusion Matrix:
+ [[ 0 49]
+ [ 0 26]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 6: Train Loss=0.0035
+Epoch 7: Train Loss=0.0035
+Epoch 8: Train Loss=0.0037
+Epoch 9: Train Loss=0.0036
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 3})
+Epoch 10: Train Loss=0.0035, Val Loss=0.0047
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         Low       0.00      0.00      0.00        49
+        High       0.35      1.00      0.51        26
+
+    accuracy                           0.35        75
+   macro avg       0.17      0.50      0.26        75
+weighted avg       0.12      0.35      0.18        75
+
+Confusion Matrix:
+ [[ 0 49]
+ [ 0 26]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 11: Train Loss=0.0036
+Epoch 12: Train Loss=0.0036
+Epoch 13: Train Loss=0.0037
+slurmstepd: error: *** STEP 15581488.0 ON gpu007 CANCELLED AT 2025-03-30T21:15:09 DUE TO PREEMPTION ***
+slurmstepd: error: *** JOB 15581488 ON gpu007 CANCELLED AT 2025-03-30T21:15:09 DUE TO PREEMPTION ***
+submitit WARNING (2025-03-30 21:15:09,170) - Bypassing signal SIGTERM
+submitit WARNING (2025-03-30 21:15:09,170) - Bypassing signal SIGTERM
+submitit WARNING (2025-03-30 21:15:09,221) - Bypassing signal SIGTERM
+submitit WARNING (2025-03-30 21:15:09,221) - Bypassing signal SIGTERM
+submitit WARNING (2025-03-30 21:15:09,222) - Bypassing signal SIGCONT
+submitit WARNING (2025-03-30 21:15:09,222) - Bypassing signal SIGCONT
+submitit INFO (2025-03-30 22:42:32,290) - Starting with JobEnvironment(job_id=15581488, hostname=gpu029, local_rank=0(1), node=0(1), global_rank=0(1))
+submitit INFO (2025-03-30 22:42:32,291) - Loading pickle: /fs01/home/ewillis/my_stuff/mri_resnet/logs/15581488_submitted.pkl
+Net(
+  (blocks): ModuleList(
+    (0): ResNetBasicStem(
+      (conv): Conv3d(1, 64, kernel_size=(3, 7, 7), stride=(1, 2, 2), padding=(1, 3, 3), bias=False)
+      (norm): BatchNorm3d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (activation): ReLU()
+      (pool): MaxPool3d(kernel_size=(1, 3, 3), stride=(1, 2, 2), padding=[0, 1, 1], dilation=1, ceil_mode=False)
+    )
+    (1): ResStage(
+      (res_blocks): ModuleList(
+        (0): ResBlock(
+          (branch1_conv): Conv3d(64, 256, kernel_size=(1, 1, 1), stride=(np.int64(1), np.int64(1), np.int64(1)), bias=False)
+          (branch1_norm): BatchNorm3d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(64, 64, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_a): BatchNorm3d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(64, 64, kernel_size=(1, 3, 3), stride=(1, 1, 1), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(64, 256, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+        (1-2): 2 x ResBlock(
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(256, 64, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_a): BatchNorm3d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(64, 64, kernel_size=(1, 3, 3), stride=(1, 1, 1), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(64, 256, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+      )
+    )
+    (2): ResStage(
+      (res_blocks): ModuleList(
+        (0): ResBlock(
+          (branch1_conv): Conv3d(256, 512, kernel_size=(1, 1, 1), stride=(np.int64(1), np.int64(2), np.int64(2)), bias=False)
+          (branch1_norm): BatchNorm3d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(256, 128, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_a): BatchNorm3d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(128, 128, kernel_size=(1, 3, 3), stride=(1, 2, 2), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(128, 512, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+        (1-3): 3 x ResBlock(
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(512, 128, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_a): BatchNorm3d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(128, 128, kernel_size=(1, 3, 3), stride=(1, 1, 1), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(128, 512, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+      )
+    )
+    (3): ResStage(
+      (res_blocks): ModuleList(
+        (0): ResBlock(
+          (branch1_conv): Conv3d(512, 1024, kernel_size=(1, 1, 1), stride=(np.int64(1), np.int64(2), np.int64(2)), bias=False)
+          (branch1_norm): BatchNorm3d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(512, 256, kernel_size=(3, 1, 1), stride=(1, 1, 1), padding=(1, 0, 0), bias=False)
+            (norm_a): BatchNorm3d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(256, 256, kernel_size=(1, 3, 3), stride=(1, 2, 2), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(256, 1024, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+        (1-5): 5 x ResBlock(
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(1024, 256, kernel_size=(3, 1, 1), stride=(1, 1, 1), padding=(1, 0, 0), bias=False)
+            (norm_a): BatchNorm3d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(256, 256, kernel_size=(1, 3, 3), stride=(1, 1, 1), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(256, 1024, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+      )
+    )
+    (4): ResStage(
+      (res_blocks): ModuleList(
+        (0): ResBlock(
+          (branch1_conv): Conv3d(1024, 2048, kernel_size=(1, 1, 1), stride=(np.int64(1), np.int64(2), np.int64(2)), bias=False)
+          (branch1_norm): BatchNorm3d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(1024, 512, kernel_size=(3, 1, 1), stride=(1, 1, 1), padding=(1, 0, 0), bias=False)
+            (norm_a): BatchNorm3d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(512, 512, kernel_size=(1, 3, 3), stride=(1, 2, 2), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(512, 2048, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+        (1-2): 2 x ResBlock(
+          (branch2): BottleneckBlock(
+            (conv_a): Conv3d(2048, 512, kernel_size=(3, 1, 1), stride=(1, 1, 1), padding=(1, 0, 0), bias=False)
+            (norm_a): BatchNorm3d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_a): ReLU()
+            (conv_b): Conv3d(512, 512, kernel_size=(1, 3, 3), stride=(1, 1, 1), padding=(0, 1, 1), bias=False)
+            (norm_b): BatchNorm3d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (act_b): ReLU()
+            (conv_c): Conv3d(512, 2048, kernel_size=(1, 1, 1), stride=(1, 1, 1), bias=False)
+            (norm_c): BatchNorm3d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          )
+          (activation): ReLU()
+        )
+      )
+    )
+    (5): ResNetBasicHead(
+      (pool): AvgPool3d(kernel_size=(4, 7, 7), stride=(1, 1, 1), padding=(0, 0, 0))
+      (dropout): Dropout(p=0.5, inplace=False)
+      (proj): Linear(in_features=2048, out_features=2, bias=True)
+      (output_pool): AdaptiveAvgPool3d(output_size=1)
+    )
+  )
+)
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Batch Image Shape: torch.Size([4, 1, 60, 256, 256])
+Batch Labels: tensor([0, 1, 0, 0])
+Epoch 1: Train Loss=0.0044
+Epoch 2: Train Loss=0.0037
+Epoch 3: Train Loss=0.0037
+Epoch 4: Train Loss=0.0036
+Predicted class counts: Counter({np.int64(1): 2, np.int64(0): 2})
+Predicted class counts: Counter({np.int64(0): 4})
+Predicted class counts: Counter({np.int64(0): 4})
+Predicted class counts: Counter({np.int64(0): 4})
+Predicted class counts: Counter({np.int64(1): 3, np.int64(0): 1})
+Predicted class counts: Counter({np.int64(0): 4})
+Predicted class counts: Counter({np.int64(0): 4})
+Predicted class counts: Counter({np.int64(0): 4})
+Predicted class counts: Counter({np.int64(0): 3, np.int64(1): 1})
+Predicted class counts: Counter({np.int64(0): 3, np.int64(1): 1})
+Predicted class counts: Counter({np.int64(0): 4})
+Predicted class counts: Counter({np.int64(0): 3, np.int64(1): 1})
+Predicted class counts: Counter({np.int64(0): 3, np.int64(1): 1})
+Predicted class counts: Counter({np.int64(0): 3, np.int64(1): 1})
+Predicted class counts: Counter({np.int64(0): 3, np.int64(1): 1})
+Predicted class counts: Counter({np.int64(0): 4})
+Predicted class counts: Counter({np.int64(0): 3, np.int64(1): 1})
+Predicted class counts: Counter({np.int64(1): 3, np.int64(0): 1})
+Predicted class counts: Counter({np.int64(0): 3})
+Epoch 5: New best model saved (val_loss=0.0037)
+Epoch 5: Train Loss=0.0038, Val Loss=0.0037
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         Low       0.68      0.84      0.75        49
+        High       0.47      0.27      0.34        26
+
+    accuracy                           0.64        75
+   macro avg       0.57      0.55      0.55        75
+weighted avg       0.61      0.64      0.61        75
+
+Confusion Matrix:
+ [[41  8]
+ [19  7]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 6: Train Loss=0.0038
+Epoch 7: Train Loss=0.0037
+Epoch 8: Train Loss=0.0036
+Epoch 9: Train Loss=0.0036
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 3})
+Epoch 10: New best model saved (val_loss=0.0035)
+Epoch 10: Train Loss=0.0036, Val Loss=0.0035
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         Low       0.00      0.00      0.00        49
+        High       0.35      1.00      0.51        26
+
+    accuracy                           0.35        75
+   macro avg       0.17      0.50      0.26        75
+weighted avg       0.12      0.35      0.18        75
+
+Confusion Matrix:
+ [[ 0 49]
+ [ 0 26]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 11: Train Loss=0.0035
+Epoch 12: Train Loss=0.0036
+Epoch 13: Train Loss=0.0036
+Epoch 14: Train Loss=0.0037
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 3})
+Epoch 15: New best model saved (val_loss=0.0035)
+Epoch 15: Train Loss=0.0036, Val Loss=0.0035
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         Low       0.00      0.00      0.00        49
+        High       0.35      1.00      0.51        26
+
+    accuracy                           0.35        75
+   macro avg       0.17      0.50      0.26        75
+weighted avg       0.12      0.35      0.18        75
+
+Confusion Matrix:
+ [[ 0 49]
+ [ 0 26]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 16: Train Loss=0.0038
+Epoch 17: Train Loss=0.0036
+Epoch 18: Train Loss=0.0035
+Epoch 19: Train Loss=0.0036
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 3})
+Epoch 20: Train Loss=0.0036, Val Loss=0.0035
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         Low       0.00      0.00      0.00        49
+        High       0.35      1.00      0.51        26
+
+    accuracy                           0.35        75
+   macro avg       0.17      0.50      0.26        75
+weighted avg       0.12      0.35      0.18        75
+
+Confusion Matrix:
+ [[ 0 49]
+ [ 0 26]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 21: Train Loss=0.0035
+Epoch 22: Train Loss=0.0035
+Epoch 23: Train Loss=0.0035
+Epoch 24: Train Loss=0.0036
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 3})
+Epoch 25: Train Loss=0.0035, Val Loss=0.0038
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         Low       0.00      0.00      0.00        49
+        High       0.35      1.00      0.51        26
+
+    accuracy                           0.35        75
+   macro avg       0.17      0.50      0.26        75
+weighted avg       0.12      0.35      0.18        75
+
+Confusion Matrix:
+ [[ 0 49]
+ [ 0 26]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 26: Train Loss=0.0035
+Epoch 27: Train Loss=0.0035
+Epoch 28: Train Loss=0.0036
+Epoch 29: Train Loss=0.0035
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 3})
+Epoch 30: Train Loss=0.0035, Val Loss=0.0036
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         Low       0.00      0.00      0.00        49
+        High       0.35      1.00      0.51        26
+
+    accuracy                           0.35        75
+   macro avg       0.17      0.50      0.26        75
+weighted avg       0.12      0.35      0.18        75
+
+Confusion Matrix:
+ [[ 0 49]
+ [ 0 26]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 31: Train Loss=0.0035
+Epoch 32: Train Loss=0.0035
+Epoch 33: Train Loss=0.0034
+Epoch 34: Train Loss=0.0034
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 4})
+Predicted class counts: Counter({np.int64(1): 3})
+Epoch 35: Train Loss=0.0036, Val Loss=0.0035
+
+Classification Report:
+               precision    recall  f1-score   support
+
+         Low       0.00      0.00      0.00        49
+        High       0.35      1.00      0.51        26
+
+    accuracy                           0.35        75
+   macro avg       0.17      0.50      0.26        75
+weighted avg       0.12      0.35      0.18        75
+
+Confusion Matrix:
+ [[ 0 49]
+ [ 0 26]]
+/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torchio/data/image.py:248: UserWarning: Using TorchIO images without a torchio.SubjectsLoader in PyTorch >= 2.3 might have unexpected consequences, e.g., the collated batches will be instances of torchio.Subject with 5D images. Replace your PyTorch DataLoader with a torchio.SubjectsLoader so that the collated batch becomes a dictionary, as expected. See https://github.com/TorchIO-project/torchio/issues/1179 for more context about this issue.
+  warnings.warn(message, stacklevel=1)
+Epoch 36: Train Loss=0.0036
+Epoch 37: Train Loss=0.0035
+Epoch 38: Train Loss=0.0035
+Epoch 39: Train Loss=0.0035
+submitit INFO (2025-03-31 08:20:43,391) - Job has timed out. Ran 578 minutes out of requested 580 minutes.
+submitit WARNING (2025-03-31 08:20:43,426) - Caught signal SIGUSR2 on gpu029: this job is timed-out.
+submitit WARNING (2025-03-31 08:20:43,426) - Caught signal SIGUSR2 on gpu029: this job is timed-out.
+submitit INFO (2025-03-31 08:20:43,426) - Job not requeued because: timed-out and not checkpointable.
+submitit WARNING (2025-03-31 08:20:43,426) - Bypassing signal SIGCONT
+submitit WARNING (2025-03-31 08:20:43,426) - Bypassing signal SIGCONT
+submitit ERROR (2025-03-31 08:20:43,702) - Submitted job triggered an exception
+submitit ERROR (2025-03-31 08:20:43,702) - Submitted job triggered an exception
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/submitit/core/_submit.py", line 11, in <module>
+    submitit_main()
+    ~~~~~~~~~~~~~^^
+  File "/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/submitit/core/submission.py", line 76, in submitit_main
+    process_job(args.folder)
+    ~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/submitit/core/submission.py", line 69, in process_job
+    raise error
+  File "/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/submitit/core/submission.py", line 55, in process_job
+    result = delayed.result()
+  File "/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/submitit/core/utils.py", line 137, in result
+    self._result = self.function(*self.args, **self.kwargs)
+                   ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/fs01/home/ewillis/my_stuff/mri_resnet/resnet.py", line 172, in train
+    for inputs, labels in val_loader:
+                          ^^^^^^^^^^
+  File "/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torch/utils/data/dataloader.py", line 708, in __next__
+    data = self._next_data()
+  File "/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torch/utils/data/dataloader.py", line 764, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/torch/utils/data/_utils/fetch.py", line 52, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+            ~~~~~~~~~~~~^^^^^
+  File "/fs01/home/ewillis/my_stuff/mri_resnet/resnet.py", line 71, in __getitem__
+    dcm = pydicom.dcmread(fpath)
+  File "/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/pydicom/filereader.py", line 1078, in dcmread
+    dataset = read_partial(
+        fp,
+    ...<3 lines>...
+        specific_tags=specific_tags,
+    )
+  File "/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/pydicom/filereader.py", line 924, in read_partial
+    dataset = read_dataset(
+        fileobj,
+    ...<4 lines>...
+        specific_tags=specific_tags,
+    )
+  File "/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/pydicom/filereader.py", line 476, in read_dataset
+    raw_data_elements = {e.tag: e for e in de_gen}
+                                           ^^^^^^
+  File "/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/pydicom/filereader.py", line 304, in data_element_generator
+    seq = read_sequence(
+        fp, is_implicit_VR, is_little_endian, length, encoding
+    )
+  File "/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/pydicom/filereader.py", line 529, in read_sequence
+    dataset = read_sequence_item(
+        fp, is_implicit_VR, is_little_endian, encoding, offset
+    )
+  File "/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/pydicom/filereader.py", line 588, in read_sequence_item
+    ds = read_dataset(
+        fp,
+    ...<4 lines>...
+        at_top_level=False,
+    )
+  File "/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/pydicom/filereader.py", line 476, in read_dataset
+    raw_data_elements = {e.tag: e for e in de_gen}
+                                           ^^^^^^
+  File "/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/pydicom/filereader.py", line 130, in data_element_generator
+    tag_set: set[int] = {tag for tag in specific_tags} if specific_tags else set()
+                                                                             ~~~^^
+  File "/h/ewillis/.conda/envs/resnet/lib/python3.13/site-packages/submitit/core/job_environment.py", line 226, in checkpoint_and_try_requeue
+    raise utils.UncompletedJobError(message)
+submitit.core.utils.UncompletedJobError: Job not requeued because: timed-out and not checkpointable.
+slurmstepd: error: *** JOB 15581488 ON gpu029 CANCELLED AT 2025-03-31T08:22:35 DUE TO TIME LIMIT ***
+slurmstepd: error: *** STEP 15581488.0 ON gpu029 CANCELLED AT 2025-03-31T08:22:35 DUE TO TIME LIMIT ***
+srun: Job step aborted: Waiting up to 62 seconds for job step to finish.

@@ -4,18 +4,37 @@ import numpy as np
 import torch.nn as nn
 import torch.optim as optim
 import torchvision.transforms as transforms
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset, WeightedRandomSampler
 import torch.nn.functional as F
 import pydicom
 import torchio as tio
 from pytorchvideo.models.resnet import create_resnet
 from sklearn.metrics import classification_report, confusion_matrix
-from torch.utils.data import Dataset
 from collections import Counter
 
 # Label mapping for multi-class (GG1 to GG5)
 gleason_labels = {"GG1": 0, "GG2": 1, "GG3": 2, "GG4": 3, "GG5": 4}
 class_names = list(gleason_labels.keys())
+
+# Focal Loss Implementation
+class FocalLoss(nn.Module):
+    def __init__(self, alpha=None, gamma=0.5):
+        super(FocalLoss, self).__init__()
+        self.alpha = alpha
+        self.gamma = gamma
+
+    def forward(self, inputs, targets):
+        ce_loss = F.cross_entropy(inputs, targets, reduction='none')
+        pt = torch.exp(-ce_loss)
+
+        if self.alpha is not None:
+            alpha_factor = self.alpha[targets]  # index alpha per target class
+        else:
+            alpha_factor = 1.0
+
+        focal_loss = alpha_factor * (1 - pt) ** self.gamma * ce_loss
+        return focal_loss.mean()
+
 
 class MRIDataset(Dataset):
     def __init__(self, root_dir, transform=None, binary=False):
@@ -29,16 +48,12 @@ class MRIDataset(Dataset):
             if os.path.isdir(folder_path):
                 label_str = folder_name.split("-")[-1]
                 if self.binary:
-                    # Only keep low (GG1) and high (GG4 or GG5) samples
                     if label_str == "GG1":
                         label = 0  # low
                         self.samples.append((folder_path, label))
                     elif label_str in ["GG4", "GG5"]:
                         label = 1  # high
                         self.samples.append((folder_path, label))
-                    else:
-                        # Ignore GG2 and GG3
-                        continue
                 else:
                     if label_str in gleason_labels:
                         label = gleason_labels[label_str]
@@ -79,69 +94,61 @@ class MRIDataset(Dataset):
         return volume, label
 
 
-
-def compute_class_weights(dataset, binary=False):
-    """
-    Computes class weights based on class frequencies in the dataset.
-    Returns a torch tensor of weights.
-    """
-    # Count labels in the training dataset
-    labels = [label for _, label in dataset.samples]
-    counter = Counter(labels)
-    total = sum(counter.values())
+def train(binary=False, epochs = 200):
     num_classes = 2 if binary else 5
 
-    weights = []
-    for i in range(num_classes):
-        count = counter.get(i, 1)  # avoid division by 0
-        weight = total / (num_classes * count)
-        weights.append(weight)
-
-    return torch.tensor(weights).to("cuda")
-
-def train(binary=False):
-    # Set number of classes based on mode
-    num_classes = 2 if binary else 5
-
-    # Create the ResNet50 model with the correct number of classes.
     model = create_resnet(
         input_channel=1,
         model_depth=50,
         norm=torch.nn.BatchNorm3d,
     )
     model.blocks[5].proj = nn.Linear(in_features=2048, out_features=num_classes)
-
     model = model.to("cuda")
 
     print(model)
 
-    transform = transforms.Compose([
-        transforms.RandomHorizontalFlip(),
-        transforms.RandomRotation(15)
+    # Updated augmentations using torchio
+    train_transform = tio.Compose([
+        tio.RandomFlip(axes=('LR',), flip_probability=0.5),
+        tio.RandomAffine(scales=(0.9, 1.1), degrees=10),
+        tio.RandomNoise(std=(0, 0.05)),
+        tio.RescaleIntensity(out_min_max=(0, 1)),
+        tio.Resize((60, 256, 256)),
     ])
 
-    # Create datasets with the binary flag passed on.
-    train_dataset = MRIDataset("./dataset/train", transform=transform, binary=binary)
-    val_dataset = MRIDataset("./dataset/test", transform=transform, binary=binary)
-    train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True, num_workers=1)  # Adjust batch size as needed
-    val_loader = DataLoader(val_dataset, batch_size=4, shuffle=False, num_workers=1)
+    val_transform = tio.Compose([
+        tio.RescaleIntensity(out_min_max=(0, 1)),
+        tio.Resize((60, 256, 256)),
+    ])
 
-    # Check DataLoader output for one batch.
+    train_dataset = MRIDataset("./dataset/train", transform=train_transform, binary=binary)
+    val_dataset = MRIDataset("./dataset/test", transform=val_transform, binary=binary)
+
+    # Balanced sampler
+    labels = [label for _, label in train_dataset.samples]
+    class_sample_count = np.array([len(np.where(np.array(labels) == t)[0]) for t in np.unique(labels)])
+    weights = 1. / class_sample_count
+    samples_weights = np.array([weights[t] for t in labels])
+    sampler = WeightedRandomSampler(samples_weights, len(samples_weights), replacement=True)
+
+    train_loader = DataLoader(train_dataset, batch_size=4, sampler=sampler, num_workers=0)
+    val_loader = DataLoader(val_dataset, batch_size=4, shuffle=False, num_workers=0)
+
+    # Debug a batch
     for images, labels in train_loader:
-        print("Batch Image Shape:", images.shape)  # Expected shape: (Batch, 1, 60, H, W)
+        print("Batch Image Shape:", images.shape)
         print("Batch Labels:", labels)
         break
 
-    class_weights = compute_class_weights(train_dataset, binary=binary)
-    print("Class Weights:", class_weights)
-    criterion = nn.CrossEntropyLoss(weight=class_weights)
-
+    # Focal loss
+    class_weights = torch.tensor(weights, dtype=torch.float).to("cuda")
+    criterion = FocalLoss(alpha=class_weights, gamma=0.5)
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
     best_val_loss = float('inf')
     checkpoint_path = "./best_model.pt"
 
-    for epoch in range(1, 101):
+    for epoch in range(1, epochs+1):
         model.train()
         running_loss = 0.0
         for inputs, labels in train_loader:
@@ -157,7 +164,6 @@ def train(binary=False):
 
         # Validation step
         if epoch % 5 == 0:
-
             model.eval()
             val_loss = 0.0
             all_preds = []
@@ -170,12 +176,12 @@ def train(binary=False):
                     val_loss += loss.item()
 
                     preds = torch.argmax(outputs, dim=1)
+                    print("Predicted class counts:", Counter(preds.cpu().numpy()))
                     all_preds.extend(preds.cpu().numpy())
                     all_labels.extend(labels.cpu().numpy())
 
             avg_val_loss = val_loss / len(val_loader)
 
-            # Save checkpoint if best
             if avg_val_loss < best_val_loss:
                 best_val_loss = avg_val_loss
                 torch.save(model.state_dict(), checkpoint_path)
@@ -183,13 +189,8 @@ def train(binary=False):
 
             print(f"Epoch {epoch}: Train Loss={avg_train_loss:.4f}, Val Loss={avg_val_loss:.4f}")
 
-            # Classification report
-            if binary:
-                target_names = ["Low", "High"]
-                labels_list = [0, 1]
-            else:
-                target_names = [label for label, _ in sorted(gleason_labels.items(), key=lambda x: x[1])]
-                labels_list = [0, 1, 2, 3, 4]
+            target_names = ["Low", "High"] if binary else list(gleason_labels.keys())
+            labels_list = [0, 1] if binary else list(range(num_classes))
 
             report = classification_report(
                 all_labels,

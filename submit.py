@@ -11,9 +11,9 @@ executor = submitit.AutoExecutor(folder="logs", slurm_max_num_timeout=10)
 executor.update_parameters(
     slurm_gres='gpu:a40:1', 
     cpus_per_task=16,
-    slurm_time='08:00:00',  # 8 hours
+    slurm_time=1000,
     stderr_to_stdout=True,
-    slurm_name="100-binary-weighted-mri-emma"
+    slurm_name="200-binary-focal-transformer"
 )
 
 job = executor.submit(train, binary=True)
