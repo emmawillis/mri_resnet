@@ -1,15 +1,18 @@
 import os
+import sys
+import csv
 import torch
 import numpy as np
 import torch.nn as nn
 import torch.optim as optim
 import torchvision.transforms as transforms
-from torch.utils.data import DataLoader, Dataset, WeightedRandomSampler
+from torch.utils.data import DataLoader, Dataset, WeightedRandomSampler, Subset
 import torch.nn.functional as F
 import pydicom
 import torchio as tio
 from pytorchvideo.models.resnet import create_resnet
 from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.model_selection import KFold
 from collections import Counter
 
 # Label mapping for multi-class (GG1 to GG5)
@@ -94,112 +97,137 @@ class MRIDataset(Dataset):
         return volume, label
 
 
-def train(binary=False, epochs = 200):
-    num_classes = 2 if binary else 5
+def train(binary=False, epochs=300):
+    dataset = MRIDataset("./dataset/train", transform=None, binary=binary)
+    kfold = KFold(n_splits=5, shuffle=True, random_state=42)
 
-    model = create_resnet(
-        input_channel=1,
-        model_depth=50,
-        norm=torch.nn.BatchNorm3d,
-    )
-    model.blocks[5].proj = nn.Linear(in_features=2048, out_features=num_classes)
-    model = model.to("cuda")
+    gamma_values = [0.5, 1.0, 2.0, 3.0]
+    best_gamma = None
+    best_cv_loss = float('inf')
 
-    print(model)
+    os.makedirs("logs", exist_ok=True)
 
-    # Updated augmentations using torchio
-    train_transform = tio.Compose([
-        tio.RandomFlip(axes=('LR',), flip_probability=0.5),
-        tio.RandomAffine(scales=(0.9, 1.1), degrees=10),
-        tio.RandomNoise(std=(0, 0.05)),
-        tio.RescaleIntensity(out_min_max=(0, 1)),
-        tio.Resize((60, 256, 256)),
-    ])
+    summary_path = "logs/gamma_summary.csv"
+    with open(summary_path, mode='w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(["Gamma", "Avg_CV_Loss"])
 
-    val_transform = tio.Compose([
-        tio.RescaleIntensity(out_min_max=(0, 1)),
-        tio.Resize((60, 256, 256)),
-    ])
+        for gamma in gamma_values:
+            log_file_path = f"logs/gamma_{gamma}.log"
+            sys.stdout = open(log_file_path, "w")
 
-    train_dataset = MRIDataset("./dataset/train", transform=train_transform, binary=binary)
-    val_dataset = MRIDataset("./dataset/val", transform=val_transform, binary=binary)
+            print(f"\nTuning with gamma = {gamma}")
+            fold_losses = []
 
-    # Balanced sampler
-    labels = [label for _, label in train_dataset.samples]
-    class_sample_count = np.array([len(np.where(np.array(labels) == t)[0]) for t in np.unique(labels)])
-    weights = 1. / class_sample_count
-    samples_weights = np.array([weights[t] for t in labels])
-    sampler = WeightedRandomSampler(samples_weights, len(samples_weights), replacement=True)
+            for fold, (train_ids, val_ids) in enumerate(kfold.split(dataset)):
+                print(f"--- Fold {fold + 1} ---")
 
-    train_loader = DataLoader(train_dataset, batch_size=4, sampler=sampler, num_workers=0)
-    val_loader = DataLoader(val_dataset, batch_size=4, shuffle=False, num_workers=0)
+                train_transform = tio.Compose([
+                    tio.RandomFlip(axes=('LR',), flip_probability=0.5),
+                    tio.RandomAffine(scales=(0.95, 1.05),degrees=5),
+                    tio.RescaleIntensity(out_min_max=(0, 1)),
+                    tio.Resize((60, 256, 256)),
+                ])
 
-    # Debug a batch
-    for images, labels in train_loader:
-        print("Batch Image Shape:", images.shape)
-        print("Batch Labels:", labels)
-        break
+                val_transform = tio.Compose([
+                    tio.RescaleIntensity(out_min_max=(0, 1)),
+                    tio.Resize((60, 256, 256)),
+                ])
 
-    # Focal loss
-    class_weights = torch.tensor(weights, dtype=torch.float).to("cuda")
-    criterion = FocalLoss(alpha=class_weights, gamma=0.5)
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+                train_subset = Subset(dataset, train_ids)
+                val_subset = Subset(dataset, val_ids)
+                train_subset.dataset.transform = train_transform
+                val_subset.dataset.transform = val_transform
 
-    best_val_loss = float('inf')
-    checkpoint_path = "./best_model.pt"
+                labels = [label for _, label in [dataset[i] for i in train_ids]]
+                class_sample_count = np.array([len(np.where(np.array(labels) == t)[0]) for t in np.unique(labels)])
+                weights = 1. / class_sample_count
+                samples_weights = np.array([weights[t] for t in labels])
+                sampler = WeightedRandomSampler(samples_weights, len(samples_weights), replacement=True)
 
-    for epoch in range(1, epochs+1):
-        model.train()
-        running_loss = 0.0
-        for inputs, labels in train_loader:
-            inputs, labels = inputs.to("cuda"), labels.to("cuda")
-            optimizer.zero_grad()
-            outputs = model(inputs)
-            loss = criterion(outputs, labels)
-            loss.backward()
-            optimizer.step()
-            running_loss += loss.item()
+                train_loader = DataLoader(train_subset, batch_size=4, sampler=sampler, num_workers=0)
+                val_loader = DataLoader(val_subset, batch_size=4, shuffle=False, num_workers=0)
 
-        avg_train_loss = running_loss / len(train_loader)
+                model = create_resnet(
+                    input_channel=1,
+                    model_depth=50,
+                    norm=torch.nn.BatchNorm3d,
+                )
+                num_classes = 2 if binary else 5
+                model.blocks[5].proj = nn.Linear(in_features=2048, out_features=num_classes)
+                model = model.to("cuda")
 
-        # Validation step
-        if epoch % 5 == 0:
-            model.eval()
-            val_loss = 0.0
-            all_preds = []
-            all_labels = []
-            with torch.no_grad():
-                for inputs, labels in val_loader:
-                    inputs, labels = inputs.to("cuda"), labels.to("cuda")
-                    outputs = model(inputs)
-                    loss = criterion(outputs, labels)
-                    val_loss += loss.item()
+                class_weights = torch.tensor(weights, dtype=torch.float).to("cuda")
+                criterion = FocalLoss(alpha=class_weights, gamma=gamma)
+                optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-                    preds = torch.argmax(outputs, dim=1)
-                    print("Predicted class counts:", Counter(preds.cpu().numpy()))
-                    all_preds.extend(preds.cpu().numpy())
-                    all_labels.extend(labels.cpu().numpy())
+                best_val_loss = float('inf')
 
-            avg_val_loss = val_loss / len(val_loader)
+                for epoch in range(1, epochs+1):
+                    model.train()
+                    running_loss = 0.0
+                    for inputs, labels in train_loader:
+                        inputs, labels = inputs.to("cuda"), labels.to("cuda")
+                        optimizer.zero_grad()
+                        outputs = model(inputs)
+                        loss = criterion(outputs, labels)
+                        loss.backward()
+                        optimizer.step()
+                        running_loss += loss.item()
 
-            if avg_val_loss < best_val_loss:
-                best_val_loss = avg_val_loss
-                torch.save(model.state_dict(), checkpoint_path)
-                print(f"Epoch {epoch}: New best model saved (val_loss={avg_val_loss:.4f})")
+                    avg_train_loss = running_loss / len(train_loader)
 
-            print(f"Epoch {epoch}: Train Loss={avg_train_loss:.4f}, Val Loss={avg_val_loss:.4f}")
+                    if epoch % 5 == 0:
+                        model.eval()
+                        val_loss = 0.0
+                        all_preds = []
+                        all_labels = []
+                        with torch.no_grad():
+                            for inputs, labels in val_loader:
+                                inputs, labels = inputs.to("cuda"), labels.to("cuda")
+                                outputs = model(inputs)
+                                loss = criterion(outputs, labels)
+                                val_loss += loss.item()
 
-            target_names = ["Low", "High"] if binary else list(gleason_labels.keys())
-            labels_list = [0, 1] if binary else list(range(num_classes))
+                                preds = torch.argmax(outputs, dim=1)
+                                all_preds.extend(preds.cpu().numpy())
+                                all_labels.extend(labels.cpu().numpy())
 
-            report = classification_report(
-                all_labels,
-                all_preds,
-                labels=labels_list,
-                target_names=target_names,
-                zero_division=0
-            )
-            print("\nClassification Report:\n", report)
-            print("Confusion Matrix:\n", confusion_matrix(all_labels, all_preds))
-        else:
-            print(f"Epoch {epoch}: Train Loss={avg_train_loss:.4f}")
+                        avg_val_loss = val_loss / len(val_loader)
+
+                        if avg_val_loss < best_val_loss:
+                            best_val_loss = avg_val_loss
+                            torch.save(model.state_dict(), f"./best_model_fold{fold}_gamma{gamma}.pt")
+                            print(f"Epoch {epoch}: New best model saved for fold {fold} (val_loss={avg_val_loss:.4f})")
+
+                        print(f"Epoch {epoch}: Train Loss={avg_train_loss:.4f}, Val Loss={avg_val_loss:.4f}")
+
+                        target_names = ["Low", "High"] if binary else list(gleason_labels.keys())
+                        labels_list = [0, 1] if binary else list(range(num_classes))
+
+                        report = classification_report(
+                            all_labels,
+                            all_preds,
+                            labels=labels_list,
+                            target_names=target_names,
+                            zero_division=0
+                        )
+                        print("\nClassification Report:\n", report)
+                        print("Confusion Matrix:\n", confusion_matrix(all_labels, all_preds))
+                    else:
+                        print(f"Epoch {epoch}: Train Loss={avg_train_loss:.4f}")
+
+                fold_losses.append(best_val_loss)
+
+            avg_cv_loss = sum(fold_losses) / len(fold_losses)
+            print(f"\nAverage CV Loss for gamma={gamma}: {avg_cv_loss:.4f}")
+            writer.writerow([gamma, avg_cv_loss])
+
+            if avg_cv_loss < best_cv_loss:
+                best_cv_loss = avg_cv_loss
+                best_gamma = gamma
+
+            sys.stdout.close()
+            sys.stdout = sys.__stdout__
+
+    print(f"\nBest gamma: {best_gamma} with Avg CV Loss: {best_cv_loss:.4f}")

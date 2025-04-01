@@ -6,5 +6,7 @@ old_logs/
 __pycache__
 *.pyc
 60channelMRIs.zip
+20channelMRIs.zip
 *.pt
 checkpoints/
+20channelMRIs/
