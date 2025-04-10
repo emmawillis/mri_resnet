@@ -13,10 +13,10 @@ executor.update_parameters(
     cpus_per_task=16,
     slurm_time=900,
     stderr_to_stdout=True,
-    slurm_name="300-5-fold"
+    slurm_name="sgd-emma"
 )
 
-job = executor.submit(train, binary=True)
+job = executor.submit(train, binary=True, opt='sgd')
 print(job.job_id)
 
 output = job.result()  # waits for completion and returns output
